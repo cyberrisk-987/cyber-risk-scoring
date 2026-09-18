@@ -101,7 +101,7 @@ function calculate(){
   document.getElementById('summary').innerHTML=`<div class="grid"><div class="result"><span>Impact${mode==='asset'?' rating':' raw score'}</span>${chip(impact,true,mode==='asset'?5:25)}</div><div class="result"><span>Likelihood raw score</span>${chip(likelihood,true)}</div><div class="result"><span>Threat raw score</span>${chip(threat,true)}</div><div class="result"><span>Vulnerability raw score</span>${chip(vuln,true)}</div><div class="result full"><span>Final matrix position: Impact level ${impact.n||'–'} × Likelihood level ${likelihood.n||'–'}</span>${chip(overall,true)}</div></div>`;
   return{impact,threat,vulnerability:vuln,likelihood,overall,rawRiskScore,rawInputs:{impact:impactRaw,threat:threatRaw,vulnerability:vulnerabilityRaw,likelihood:likelihoodRaw}};
 }
-function data(){return{version:'1.8',exportedAt:new Date().toISOString(),mode,general:Object.fromEntries(['riskId','riskName','scoredBy','scoreDate','scoreType'].map(k=>[k,document.getElementById(k).value])),assets:assets(),assessment:Object.fromEntries(ids.slice(5).map(k=>[k,document.getElementById(k).value])),scores:calculate()}}
+function data(){return{version:'1.9',exportedAt:new Date().toISOString(),mode,general:Object.fromEntries(['riskId','riskName','scoredBy','scoreDate','scoreType'].map(k=>[k,document.getElementById(k).value])),assets:assets(),assessment:Object.fromEntries(ids.slice(5).map(k=>[k,document.getElementById(k).value])),scores:calculate()}}
 function flash(t){const s=document.getElementById('status');s.textContent=t;setTimeout(()=>s.textContent='',3000)}
 document.getElementById('assetMode').onclick=()=>setMode('asset');document.getElementById('impactMode').onclick=()=>setMode('assessment');document.getElementById('addAsset').onclick=()=>addAsset();document.querySelectorAll('input,select,textarea').forEach(e=>e.addEventListener('input',calculate));
 document.getElementById('exportBtn').onclick=()=>{const d=data(),blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${d.general.riskId||'cyber-risk'}-assessment.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);flash('JSON export created successfully.')};
@@ -119,6 +119,26 @@ document.getElementById('exportTxtBtn').onclick=()=>{
   if(value('exposure')===5)criticalElements.push('Exposure to threat');
   if(value('ease')===5)criticalElements.push('Ease of exploitation');
   const shown=x=>x&&x.n?`${x.raw} / ${x.raw<=5&&x===s.impact&&mode==='asset'?5:25} - ${x.label} (level ${x.n})`:'Not scored';
+  const justification=id=>{
+    const text=(document.getElementById(id)?.value||'').trim();
+    return text||'No justification provided.';
+  };
+  const assetJustificationLines=[];
+  if(mode==='asset'){
+    const assetList=assets();
+    if(assetList.length){
+      assetList.forEach((asset,index)=>{
+        const assetName=asset.id.trim()||asset.description.trim()||`Asset ${index+1}`;
+        assetJustificationLines.push(
+          `${index+1}. ${assetName}`,
+          `   Rating: ${asset.rating?`${asset.rating} - ${label(asset.rating)}`:'Not scored'}`,
+          `   Justification: ${asset.justification.trim()||'No justification provided.'}`
+        );
+      });
+    }else{
+      assetJustificationLines.push('No assets provided.','Justification: No justification provided.');
+    }
+  }
   const lines=[
     'CYBER RISK ASSESSMENT SUMMARY',
     '=============================',
@@ -135,6 +155,19 @@ document.getElementById('exportTxtBtn').onclick=()=>{
     `Vulnerability: ${shown(s.vulnerability)}`,
     `Likelihood: ${shown(s.likelihood)}`,
     `Final risk score: ${s.overall.n?`${s.overall.raw} / 25 - ${s.overall.label}`:'Not scored'}`,
+    '',
+    'JUSTIFICATIONS',
+    '--------------',
+    ...(mode==='asset'?
+      ['Impact - approved asset criticality:',...assetJustificationLines]:
+      [
+        `Financial impact: ${justification('financialWhy')}`,
+        `Reputational impact: ${justification('reputationWhy')}`
+      ]),
+    `Threat motivation: ${justification('motivationWhy')}`,
+    `Threat capability: ${justification('capabilityWhy')}`,
+    `Exposure to threat: ${justification('exposureWhy')}`,
+    `Ease of exploitation: ${justification('easeWhy')}`,
     '',
     criticalElements.length?'WARNING':'WARNING: None',
     criticalElements.length?`${criticalElements.join(', ')} ${criticalElements.length===1?'has':'have'} been scored as Critical. A manual uplift of the final risk score may be required.`:'No individual scoring elements have been rated Critical.',

@@ -24,7 +24,7 @@ button,input,select,textarea{font:inherit}.top{position:relative;overflow:hidden
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner"><div class="brand"><div class="shield"></div><div class="eyebrow">Cyber Security // Risk Intelligence</div></div><h1>Risk Scoring Calculator</h1><p>Structured assessment of impact, threat and vulnerability, built for clear and repeatable cyber risk decisions.</p></div></header>
+<header class="top"><div class="top-inner"><div class="brand"><div class="shield"></div><div class="eyebrow">Cyber Security // Risk Assessment</div></div><h1>Cyber Risk Scoring Calculator</h1><p>Reduce subjectivity with a structured assessment of likelihood and impact.</p></div></header>
 <main class="app">
 <nav class="progress" aria-label="Assessment sections"><button class="step-dot active" data-go="general">01 General</button><button class="step-dot" data-go="impact">02 Impact</button><button class="step-dot" data-go="threat">03 Threat</button><button class="step-dot" data-go="vulnerability">04 Vulnerability</button><button class="step-dot" data-go="result">05 Result</button></nav>
 <div class="layout"><div>
@@ -45,7 +45,7 @@ button,input,select,textarea{font:inherit}.top{position:relative;overflow:hidden
 <div class="assessment"><h3>Scoring boundaries</h3><p><b>Component scores:</b> Low 1–4, Medium 5–8, High 9–12, Very high 13–19, Critical 20–25. Each raw score maps to a level from 1 to 5.</p><p><b>Final matrix:</b> Low 1–4, Medium 5–12, Very high 13–25. The exact matrix score remains visible, so a score of 5 can be distinguished from a score of 12 even though both are Medium.</p></div>
 <h3>Final 5 × 5 matrix</h3><div class="matrix" id="matrix"></div></section>
 </div><aside class="sidebar"><section class="card score-panel"><div class="eyebrow">Live risk telemetry</div><div class="score-big" id="overallNumber">–</div><div class="score-label" id="overallLabel">Complete the assessment</div><div class="note">Exact final matrix score / 25</div><div style="margin:18px 0"><div class="mini"><span>Impact</span><b id="sideImpact">–</b></div><div class="mini"><span>Threat</span><b id="sideThreat">–</b></div><div class="mini"><span>Vulnerability</span><b id="sideVulnerability">–</b></div><div class="mini"><span>Likelihood</span><b id="sideLikelihood">–</b></div></div><div class="actions"><button class="btn primary" id="exportBtn">Export assessment as JSON</button></div><div class="status" id="status"></div><div class="note">No assessment data is saved in the browser. Export the JSON before closing or refreshing this page.</div></section></aside></div>
-<div class="footer">CYBER RISK SCORING CALCULATOR // DATA CLASSIFICATION: INTERNAL</div></main>
+<div class="footer">CYBER RISK SCORING CALCULATOR</div></main>
 <script>
 const ratings=['Low','Medium','High','Very high','Critical'];
 const ids=['riskId','riskName','scoredBy','scoreDate','scoreType','financial','reputation','financialWhy','reputationWhy','motivation','capability','motivationWhy','capabilityWhy','exposure','ease','exposureWhy','easeWhy'];
